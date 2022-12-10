@@ -22,6 +22,9 @@ class Certificate:
             "PublicKeyLen": None,
             "PublicKeyAlg": None,
             "SignatureAlg": None,
+            "ip": addr.ip_addr,
+            "port": addr.port,
+            "queryId": None,
         }
 
         # get info from cert dict
