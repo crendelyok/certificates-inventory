@@ -5,3 +5,4 @@ pydantic~=1.10.2
 pylint~=2.12.2
 sqlalchemy~=1.4.44
 uvicorn~=0.20.0
+cryptography~=38.0.1

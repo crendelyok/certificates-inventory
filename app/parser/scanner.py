@@ -1,5 +1,5 @@
 from app.parser.base import BaseSocketScanner
 
 
-class SockerScanner(BaseSocketScanner):
+class SocketScanner(BaseSocketScanner):
     pass
