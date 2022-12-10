@@ -1,0 +1,19 @@
+version: "3"
+
+services:
+  parser:
+    build: app/parser
+    expose:
+      - "5001"
+
+  analyzer:
+    build: app/analyzer
+    expose:
+      - "5002"
+    volumes:
+      - "./app/analyzer/db:/app/analyzer/db"
+
+  frontend:
+    build: app/frontend
+    expose:
+      - "5000"
