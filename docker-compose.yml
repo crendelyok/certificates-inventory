@@ -1,19 +1,35 @@
 version: "3"
 
 services:
+  base:
+    build:
+      context: .
+      dockerfile: ./images/base/Dockerfile
+    image: base
+    deploy:
+      mode: replicated
+      replicas: 0
+
   parser:
-    build: app/parser
+    build:
+      context: .
+      dockerfile: ./app/parser/Dockerfile
     expose:
       - "5001"
 
   analyzer:
-    build: app/analyzer
+    build:
+      context: .
+      dockerfile: ./app/analyzer/Dockerfile
     expose:
       - "5002"
-    volumes:
-      - "./app/analyzer/db:/app/analyzer/db"
+    # volumes:
+    #   - "./app/analyzer/db:/app/analyzer/db"
 
   frontend:
-    build: app/frontend
+    build:
+      context: .
+      dockerfile: ./app/frontend/Dockerfile
+    network_mode: host
     expose:
       - "5000"

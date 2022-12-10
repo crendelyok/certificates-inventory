@@ -4,11 +4,11 @@ from typing import ClassVar
 
 from fastapi.templating import Jinja2Templates
 
-from app.settings.base import BaseAppSettings
+from app.common.settings.base import BaseAppSettings
 
 
 class Settings(BaseAppSettings):
-    templates: ClassVar[Jinja2Templates] = Jinja2Templates("web/templates")
+    templates: ClassVar[Jinja2Templates] = Jinja2Templates("/app/frontend/web/templates")
 
     host_ip: ClassVar[str] = socket.gethostbyname(socket.gethostname())
 
@@ -20,4 +20,4 @@ class Settings(BaseAppSettings):
     @staticmethod
     @lru_cache
     def get_settings():
-        return Settings()
+        return Settings(**BaseAppSettings.get_yaml_config())

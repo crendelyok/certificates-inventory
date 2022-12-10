@@ -17,6 +17,7 @@ async def catch_exceptions_middleware(request: Request, call_next):
             request.url,
             request.query_params,
             await request.body(),
-            str(exc)
+            str(exc),
+            exc_info=True
         )
         raise HTTPException(status_code=500, detail="Internal server error") from exc

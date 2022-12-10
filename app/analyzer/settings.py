@@ -1,6 +1,6 @@
 from functools import lru_cache
 
-from app.settings.base import BaseAppSettings
+from app.common.settings.base import BaseAppSettings
 
 
 class Settings(BaseAppSettings):
@@ -9,4 +9,4 @@ class Settings(BaseAppSettings):
     @staticmethod
     @lru_cache
     def get_settings():
-        return Settings()
+        return Settings(**BaseAppSettings.get_yaml_config())

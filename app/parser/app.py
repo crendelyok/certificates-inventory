@@ -1,12 +1,22 @@
+import logging
+import logging.config
+
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 
-from app.models.config import SertificatesScanConfig
-from app.utils.exceptions_logger import catch_exceptions_middleware
+from app.common.models.config import SertificatesScanConfig
+from app.common.utils.exceptions_logger import catch_exceptions_middleware
+from app.common.utils.logger_config import get_logger_config
 
 
-app = FastAPI()
+app = FastAPI(title="Parser")
 app.middleware("http")(catch_exceptions_middleware)
+
+
+@app.on_event("startup")
+async def startup():
+    logging.config.dictConfig(get_logger_config())
+    logging.info("Server %s has started", app.title)
 
 
 @app.post("/scan")
