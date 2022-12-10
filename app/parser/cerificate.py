@@ -1,18 +1,21 @@
-import cryptography
-import tempfile
+import os
+
+import cryptography.x509
+import cryptography.hazmat.backends.openssl
+import time
 import ssl
 
-from app.parser.base import Address
-from app.parser.constants import CERTIFICATE_PUBLIC_KEY_TYPES
+from app.parser import Address
 
 
-class Certificate():
+class Certificate:
     def __init__(self, bcert, addr: Address):
         """
         bcert is der_x509 binary formatted certificate
         """
 
         self.cerificate_data = {
+            "bcert": bcert,
             "ca": None,
             "notAfter": None,
             "notBefore": None,
@@ -22,15 +25,24 @@ class Certificate():
         }
 
         # get info from cert dict
+        filename = f"{str(time.time())}_cert.pem"
         try:
-            with tempfile.TemporaryFile() as f:
-                f.write(ssl.DER_cert_to_PEM_cert(bcert))
-                cert_dict = ssl._ssl._test_decode_cert(f.name)
+            with open(filename, "w") as f:
+                cert = ssl.DER_cert_to_PEM_cert(bcert)
+                f.write(cert)
+                f.seek(0)
+                cert_dict = ssl._ssl._test_decode_cert(filename)
                 self.cerificate_data["ca"] = cert_dict["issuer"]
                 self.cerificate_data["notAfter"] = cert_dict["notAfter"]
                 self.cerificate_data["notBefore"] = cert_dict["notBefore"]
-        except:
+        except Exception as e:
+            print(e)
             pass
+        finally:
+            try:
+                os.unlink(filename)
+            except:
+                pass
 
         # get info from binary itself
         try:
@@ -41,7 +53,8 @@ class Certificate():
             self.cerificate_data["PublicKeyLen"] = cert.public_key().key_size
             self.cerificate_data["SignatureAlg"] = self.get_signature_alg(cert.public_key())
             self.cerificate_data["PublicKeyAlg"] = self.get_public_key_alg(cert.public_key())
-        except:
+        except Exception as e:
+            print(e)
             pass
 
     @staticmethod

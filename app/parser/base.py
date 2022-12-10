@@ -1,19 +1,8 @@
 from abc import ABC, abstractmethod
-from collections import namedtuple
 from typing import Iterable
 
 from app.parser.cerificate import Certificate
-
-
-__address_fields = ("ip_addr", "port", "domain_name",)
-
-
-class Address(namedtuple(
-    "Address",
-    __address_fields,
-    defaults=(None,) * len(__address_fields)
-)):
-    __slots__ = ()
+from app.parser import Address
 
 
 class BaseCertificateGetter(ABC):
@@ -43,6 +32,6 @@ class BaseSocketScanner:
         for checker in self._checkers:
             cert = await checker.get(self._addr)
             if cert:
-                self._certificate = sert
+                self._certificate = cert
                 return True
         return False
