@@ -6,6 +6,14 @@
 
 <body>
     <h1>Report on query {{ query_id }}</h1>
-
-
+    <div>
+        <p>Checked ip   : {{ reports['ip'] }}</p>
+        <p>Checked port : {{ reports['port'] }}</p>
+        <p>Is certificate expired?&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - {{ reports['is_expired']}}</p>
+        <p>Is certificate long-term? &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - {{ reports['is_long_term']}}</p>
+        <p>Is length of key safe?&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - {{ reports['is_keylen_safe']}}</p>
+        <p>Is algorithm of signature safe? &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- {{ reports['is_algo_signature_safe']}}</p>
+        <p>Is algorithm of cipher safe?&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - {{ reports['is_algo_cipher_safe']}}</p>
+        <p>Is cerificate has untrusted issuer? - {{ reports['is_issuer_error']}}</p>
+    </div>
 </body>
