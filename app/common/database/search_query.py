@@ -1,6 +1,6 @@
 from sqlalchemy import Column, DateTime, Integer, JSON, select
 
-from app.common.utils.db_setup import DBSetup
+from app.common.database.db_setup import DBSetup
 
 
 class SearchQuery(DBSetup.Base):
@@ -22,3 +22,9 @@ class SearchQuery(DBSetup.Base):
             stmt = select(SearchQuery).where(SearchQuery.rowid == query_id)
             cursor = await session.execute(stmt)
             return cursor.scalar()
+
+    @staticmethod
+    async def get_all():
+        async with DBSetup.Session() as session:
+            cursor = await session.execute(select(SearchQuery))
+            return cursor.scalars().fetchall()

@@ -6,6 +6,7 @@ from fastapi.responses import RedirectResponse
 from fastapi.templating import Jinja2Templates
 # pylint: disable=no-name-in-module
 from pydantic import ValidationError
+from starlette.datastructures import FormData
 from starlette.staticfiles import StaticFiles
 
 from app.common.utils.exceptions_logger import catch_exceptions_middleware
@@ -43,7 +44,7 @@ async def get_index_page(request: Request):
     )
 
 
-@app.get("/search_history", status_code=200)
+@app.get("/searches_history", status_code=200)
 async def get_search_history_page(request: Request):
     resp = await SingleSession.request(
         "GET",
@@ -52,7 +53,7 @@ async def get_search_history_page(request: Request):
     if not resp.ok:
         raise HTTPException(status_code=resp.status)
     return app.templates.TemplateResponse(
-        "search_history.html",
+        "searches_history.html",
         {"request": request, "history": await resp.json()}
     )
 
@@ -87,12 +88,26 @@ async def get_search_page(request: Request):
 
 
 @app.post("/search", status_code=201)
-async def start_search(config: CertificatesScanConfig):
+async def start_search(request: Request):
+    list_type_fields = CertificatesScanConfig.list_type_fields_names()
+    req_form: FormData = await request.form()
+    form_dict = {
+        name: (req_form.getlist(name) if name in list_type_fields else req_form.getlist(name)[0])
+        for name in req_form.keys()
+    }
+    try:
+        config = CertificatesScanConfig.parse_obj(form_dict)
+    except ValidationError as exc:
+        logging.warning("Validation errors: %s", str(exc))
+        return HTTPException(status_code=400, detail=str(exc))
+
     resp = await SingleSession.request(
         "POST",
         f"{Settings.get_settings().get_parser_addr()}/scan",
-        json=config.dict()
+        json=config.to_json()
     )
+    if not resp.ok:
+        raise HTTPException(status_code=resp.status)
     try:
         resp_data = SeachQueryId(**(await resp.json()))
         return RedirectResponse(url=f"/reports/{resp_data.query_id}")

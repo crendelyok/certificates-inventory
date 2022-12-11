@@ -9,7 +9,10 @@ class ScannerQueue(BaseWorkerQueue):
         item.scan()
 
     @classmethod
+    def init(cls):
+        assert cls._instance is None
+        cls._instance = cls()
+
+    @classmethod
     def get_instance(cls) -> BaseWorkerQueue:
-        if not cls._instance:
-            cls._instance = cls()
         return cls._instance

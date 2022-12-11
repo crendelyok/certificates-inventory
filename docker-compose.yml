@@ -14,9 +14,8 @@ services:
     build:
       context: .
       dockerfile: ./app/frontend/Dockerfile
-    network_mode: host
-    expose:
-      - 5000
+    ports:
+      - 5000:5000
     depends_on:
       - parser
       - analyzer
@@ -25,8 +24,6 @@ services:
     build:
       context: .
       dockerfile: ./app/parser/Dockerfile
-    ports:
-      - 5001
     expose:
       - 5001
     depends_on:
@@ -36,8 +33,6 @@ services:
     build:
       context: .
       dockerfile: ./app/analyzer/Dockerfile
-    ports:
-      - 5002
     expose:
       - 5002
     # volumes:

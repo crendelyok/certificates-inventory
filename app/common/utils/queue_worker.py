@@ -10,7 +10,7 @@ logging.getLogger(__name__)
 class BaseWorkerQueue(ABC):
     def __init__(
         self,
-        maxsize: int | None = None
+        maxsize: int = 0
     ):
         self._queue = Queue(maxsize=maxsize)
         self._paused = False
