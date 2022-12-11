@@ -17,5 +17,5 @@ class BaseAppSettings(BaseSettings, extra=Extra.allow):
 
     @staticmethod
     def get_yaml_config() -> dict:
-        with open(BaseAppSettings().config_file) as stream:
+        with open(BaseAppSettings().config_file, encoding="utf-8", mode="r") as stream:
             return yaml.safe_load(stream)

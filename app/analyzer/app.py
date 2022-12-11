@@ -4,8 +4,8 @@ import logging.config
 from fastapi import FastAPI
 
 from app.analyzer.db import DBSetup
-from app.analyzer.db.sertificate import FoundSertificate
-from app.common.models.sertificate import SertificateInfo
+from app.analyzer.db.certificate import FoundCertificate
+from app.common.models.certificate import CertificateInfo
 from app.common.utils.exceptions_logger import catch_exceptions_middleware
 from app.common.utils.logger_config import get_logger_config
 
@@ -20,7 +20,7 @@ async def startup():
     logging.info("Server %s has started", app.title)
 
 
-@app.post("/sertificate", status_code=201)
-async def save_sertificate(info: SertificateInfo):
-    sert = FoundSertificate(**info.dict())
-    await sert.insert()
+@app.post("/certificate", status_code=201)
+async def save_certificate(info: CertificateInfo):
+    cert = FoundCertificate(**info.dict())
+    await cert.insert()
