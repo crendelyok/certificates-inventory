@@ -4,11 +4,9 @@ WORKDIR /
 
 ENV config_file="/app/config.yaml"
 
-# RUN [ "mkdir", "-p", "/app/" ]
-
 COPY ./app/parser/ /app/parser
 COPY ./app/common /app/common/
-COPY ./config.yaml /app/
+COPY ./configs/parser.yaml /app/config.yaml
 
 EXPOSE 5001
 

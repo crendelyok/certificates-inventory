@@ -1,0 +1,4 @@
+---
+parser_port: 5001
+
+analyzer_port: 5002

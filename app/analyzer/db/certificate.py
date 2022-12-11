@@ -1,8 +1,9 @@
 from sqlalchemy import Column, DateTime, Integer, Text, select
 
-from app.analyzer.db import DBSetup
+from app.common.utils.db_setup import DBSetup
 
 
+# TODO(dslynko): add fields
 class FoundCertificate(DBSetup.Base):
     __tablename__ = "found_certificate"
 
@@ -13,9 +14,9 @@ class FoundCertificate(DBSetup.Base):
     port = Column(Integer, nullable=False)
     start_time = Column(DateTime, nullable=False)
     expiry_time = Column(DateTime, nullable=False)
-    keylen = Column(Integer, nullbale = False)
-    algo_signature = Column(Text, nullable = False)
-    algo_cipher = Column(Text, nullable = False)
+    keylen = Column(Integer, nullable=False)
+    algo_signature = Column(Text, nullable=False)
+    algo_cipher = Column(Text, nullable=False)
 
     async def insert(self):
         async with DBSetup.Session.begin() as session:

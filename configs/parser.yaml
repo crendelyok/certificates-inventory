@@ -1,0 +1,4 @@
+---
+default_db_path: "app/parser/db/database.db"
+
+analyzer_port: 5002

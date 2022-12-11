@@ -1,4 +1,6 @@
 from datetime import datetime
+from ipaddress import IPv4Address
+from typing import Any
 
 # pylint: disable=no-name-in-module
 from pydantic import BaseModel
@@ -13,10 +15,16 @@ class OpenKeyCertificate(BaseModel):
 
 
 class CertificateInfo(BaseModel):
-    certificate: bytes
-    query_id: int
-    ip_addr: str
+    bcert: bytes
+    issuer: Any
+    notAfter: datetime
+    notBefore: datetime
+    PublicKeyLen: int
+    PublicKeyAlg: str
+    SignatureAlg: str
+    HashAlg: str
+
+    ip: IPv4Address
     port: int
-    time_issued: datetime
-    time_found: datetime
-    extra_args: dict
+
+    queryId: int | None

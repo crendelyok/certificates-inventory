@@ -1,14 +1,15 @@
 from functools import lru_cache
+from os import cpu_count
 
 from app.common.settings.base import BaseAppSettings
 
 
 class Settings(BaseAppSettings):
-    parser_port: int
-    analyzer_port: int
+    default_db_path: str
 
-    def get_parser_addr(self) -> str:
-        return f"http://parser:{self.parser_port}"
+    workers_count: int = cpu_count()
+
+    analyzer_port: int
 
     def get_analyzer_addr(self) -> str:
         return f"http://analyzer:{self.analyzer_port}"
