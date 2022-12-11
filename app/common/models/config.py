@@ -2,7 +2,7 @@
 from pydantic import BaseModel, conlist
 
 
-class SertificatesScanConfig(BaseModel):
+class CertificatesScanConfig(BaseModel):
     included_protocols: conlist(str, min_items=1)
 
 

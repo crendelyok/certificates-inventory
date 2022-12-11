@@ -8,4 +8,3 @@ class Address(namedtuple(
     defaults=(None,) * len(__address_fields)
 )):
     __slots__ = ()
-

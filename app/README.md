@@ -11,10 +11,10 @@
 * Accepts IP addresses range and custom config from frontend
 * Validates input config
 * Reports immediately to `frontend` with unique id to later query the reports
-* Visits host devices according to the config and collects used sertificates into DB
+* Visits host devices according to the config and collects used certificates into DB
 * After visiting all addresses requests a report from `analyzer`
 
 ### Analyzer
 
-* Accepts the config and range of sertificates needed to be analyzed
+* Accepts the config and range of certificates needed to be analyzed
 * Does the analysis and sends the reports to the user

@@ -10,7 +10,7 @@ from starlette.staticfiles import StaticFiles
 from app.common.utils.exceptions_logger import catch_exceptions_middleware
 from app.common.utils.logger_config import get_logger_config
 from app.common.utils.requests import SingleSession
-from app.common.models.config import SertificatesScanConfig, ScanStartedResponse
+from app.common.models.config import CertificatesScanConfig, ScanStartedResponse
 from app.frontend.settings import Settings
 
 logging.getLogger(__name__)
@@ -58,7 +58,7 @@ async def get_search_page(request: Request):
 
 
 @app.post("/search", status_code=201)
-async def start_search(config: SertificatesScanConfig):
+async def start_search(config: CertificatesScanConfig):
     resp = await SingleSession.request(
         "POST",
         f"{Settings.get_settings().get_parser_addr()}/scan",

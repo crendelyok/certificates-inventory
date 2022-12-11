@@ -4,7 +4,7 @@ from datetime import datetime
 from pydantic import BaseModel
 
 
-class OpenKeySertificate(BaseModel):
+class OpenKeyCertificate(BaseModel):
     key: bytes
     expires_at: datetime
     emitter_name: str
@@ -12,8 +12,8 @@ class OpenKeySertificate(BaseModel):
     sign: bytes
 
 
-class SertificateInfo(BaseModel):
-    sertificate: bytes
+class CertificateInfo(BaseModel):
+    certificate: bytes
     query_id: int
     ip_addr: str
     port: int

@@ -4,7 +4,7 @@ import logging.config
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 
-from app.common.models.config import SertificatesScanConfig
+from app.common.models.config import CertificatesScanConfig
 from app.common.utils.exceptions_logger import catch_exceptions_middleware
 from app.common.utils.logger_config import get_logger_config
 
@@ -20,7 +20,7 @@ async def startup():
 
 
 @app.post("/scan")
-async def start_scan(config: SertificatesScanConfig):
+async def start_scan(config: CertificatesScanConfig):
     return JSONResponse({}, status_code=201)
 
 
