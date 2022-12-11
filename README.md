@@ -16,6 +16,8 @@ $ sudo docker-compose build
 $ sudo docker-compose up
 ```
 
+Application UI can be accessed on `http://127.0.0.1:5000`
+
 To shutdown services, run
 
 ```bash

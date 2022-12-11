@@ -5,24 +5,32 @@ from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import JSONResponse
 # pylint: disable=no-name-in-module
 from pydantic import ValidationError
+from starlette.staticfiles import StaticFiles
 
+from app.common.utils.exceptions_logger import catch_exceptions_middleware
+from app.common.utils.logger_config import get_logger_config
+from app.common.utils.requests import SingleSession
+from app.common.models.config import SertificatesScanConfig, ScanStartedResponse
 from app.frontend.settings import Settings
-from app.utils.exceptions_logger import catch_exceptions_middleware
-from app.utils.logger_config import get_logger_config
-from app.utils.requests import SingleSession
-from app.models.config import SertificatesScanConfig, ScanStartedResponse
 
 logging.getLogger(__name__)
 
 
-app = FastAPI()
+app = FastAPI(title="Frontend")
 app.middleware("http")(catch_exceptions_middleware)
+app.mount("/static/", StaticFiles(directory="/app/frontend/web/static"), name="static")
 
 
 @app.on_event("startup")
 async def startup():
     await SingleSession.init()
     logging.config.dictConfig(get_logger_config())
+    logging.info("Server %s has started", app.title)
+
+
+@app.on_event("shutdown")
+async def shutdown():
+    await SingleSession.close()
 
 
 @app.get("/", status_code=200)

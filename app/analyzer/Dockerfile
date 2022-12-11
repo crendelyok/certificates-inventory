@@ -1,9 +1,15 @@
 FROM base AS analyzer
 
-WORKDIR /app/analyzer
+WORKDIR /
 VOLUME [ "/app/analyzer/db" ]
+
+ENV config_file="/app/config.yaml"
+
+COPY ./app/analyzer/ /app/analyzer
+COPY ./app/common /app/common/
+COPY ./config.yaml /app/
 
 EXPOSE 5002
 
-# CMD [ "uvicorn" "app:app" "--host" "0.0.0.0" "--port" "5002" ]
-CMD [ ls ]
+ENTRYPOINT [ "/usr/bin/python3" ]
+CMD [ "-m", "uvicorn", "app.analyzer.app:app", "--host", "0.0.0.0", "--port", "5002" ]
