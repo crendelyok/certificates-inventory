@@ -1,4 +1,4 @@
-from sqlalchemy import Column, DateTime, Integer, JSON, Text, select
+from sqlalchemy import Column, DateTime, Integer, Text, select
 
 from app.analyzer.db import DBSetup
 
@@ -9,12 +9,13 @@ class FoundCertificate(DBSetup.Base):
     rowid = Column(Integer, nullable=False, primary_key=True, autoincrement=True)
     certificate = Column(Text, nullable=False)
     query_id = Column(Integer, nullable=False)
-    # ipv4 or ipv6
     ip_addr = Column(Text, nullable=False)
     port = Column(Integer, nullable=False)
-    time_issued = Column(DateTime, nullable=False)
-    time_found = Column(DateTime, nullable=False)
-    extra_args = Column(JSON, nullable=False)
+    start_time = Column(DateTime, nullable=False)
+    expiry_time = Column(DateTime, nullable=False)
+    keylen = Column(Integer, nullbale = False)
+    algo_signature = Column(Text, nullable = False)
+    algo_cipher = Column(Text, nullable = False)
 
     async def insert(self):
         async with DBSetup.Session.begin() as session:
