@@ -38,7 +38,7 @@ class SSLCerificateGetter(BaseCertificateGetter):
             hostname = addr.ip_addr if addr.domain_name is None else addr.domain_name
             myctx = ssl.create_default_context()
             myctx.check_hostname = False
-            myctx.verify_mode = ssl.CERT_NONE
+            myctx.verify_mode = ssl.CERT_REQUIRED
             myctx.verify_flags = ssl.VERIFY_X509_STRICT
             socket_conn = myctx.wrap_socket(socket.socket(), server_hostname=hostname)
             socket_conn.connect(addr.as_pair())
