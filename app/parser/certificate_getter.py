@@ -57,7 +57,7 @@ class SSLCerificateGetter(BaseCertificateGetter):
             myctx.verify_mode = ssl.CERT_NONE
             socket_conn = myctx.wrap_socket(socket.socket(), server_hostname=hostname)
             socket_conn.settimeout(SOCKET_CONN_TTL)
-            socket_conn.connect((hostname, int(addr.port)))
+            socket_conn.connect(addr.as_pair())
             binary_cert = socket_conn.getpeercert(binary_form=True)
         except ValueError as vexc:
             raise Exception("Can't establish connection") from vexc
