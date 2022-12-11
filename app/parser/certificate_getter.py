@@ -21,27 +21,27 @@ class SSLCerificateGetter(BaseCertificateGetter):
         try:
             bcert = self.create_binary_certificate(addr)
         except Exception as exc:
-            logging.warning(exc)
+            logging.warning(f"SSLCerificateGetter: Can't create_binary_certificate {exc}")
             return None
         # check if it's self-signed
         params["issuerError"] = True
         try:
-            params["issuerError"] = self.check_self_signed(addr)
+            params["issuerError"] = self.check_issuer_error(addr)
         except Exception as exc:
             logging.warning(exc)
         return Certificate(bcert, addr, query_id=self._query_id, params=params)
 
     @staticmethod
-    def check_self_signed(addr: Address) -> bool:
+    def check_issuer_error(addr: Address) -> bool:
         # create socket
         try:
             hostname = addr.ip_addr if addr.domain_name is None else addr.domain_name
             myctx = ssl.create_default_context()
             myctx.check_hostname = False
-            myctx.verify_mode = ssl.CERT_REQUIRED
+            myctx.verify_mode = ssl.CERT_NONE
+            myctx.verify_flags = ssl.VERIFY_X509_STRICT
             socket_conn = myctx.wrap_socket(socket.socket(), server_hostname=hostname)
             socket_conn.connect(addr.as_pair())
-            binary_cert = socket_conn.getpeercert(binary_form=True)
         except Exception as exc:
             logging.warning(exc)
             return True
@@ -57,7 +57,7 @@ class SSLCerificateGetter(BaseCertificateGetter):
             myctx.verify_mode = ssl.CERT_NONE
             socket_conn = myctx.wrap_socket(socket.socket(), server_hostname=hostname)
             socket_conn.settimeout(SOCKET_CONN_TTL)
-            socket_conn.connect(addr.as_pair())
+            socket_conn.connect((hostname, int(addr.port)))
             binary_cert = socket_conn.getpeercert(binary_form=True)
         except ValueError as vexc:
             raise Exception("Can't establish connection") from vexc

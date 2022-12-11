@@ -37,11 +37,11 @@ class Certificate:
                 port=addr.port,
                 queryId=query_id,
             )
+            print(self.cerificate_data)
             if params:
                 if "issuerError" in params:
                     self.cerificate_data.issuerError = params["issuerError"]
         except Exception as exc:
-
             logging.warning(exc)
 
     @staticmethod
