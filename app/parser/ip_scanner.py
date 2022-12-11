@@ -14,12 +14,16 @@ logging.getLogger(__name__)
 
 class IPScanner(BaseIPScanner):
     _default_ports = [
+        443,  # should be first, as the most default
+        21,
+        22,
         25,
         53,
         80,
+        110,
         161,
         162,
-        443,
+        3306,
         7102,
         7104,
         7105,
