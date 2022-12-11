@@ -1,45 +1,37 @@
 from abc import ABC, abstractmethod
-from collections import namedtuple
 from typing import Iterable
 
-
-__address_fields = ("ip_addr", "port", "domain_name",)
-class Address(namedtuple(
-    "Address",
-    __address_fields,
-    defaults=(None,) * len(__address_fields)
-)):
-    __slots__ = ()
+from app.parser.cerificate import Certificate
+from app.parser import Address
 
 
-class BaseProtocolChecker(ABC):
+class BaseCertificateGetter(ABC):
+    """
+    Checks if certificate can be obtained and get it if possible
+    """
     @abstractmethod
-    async def check(self, addr: Address, **kwargs) -> str | None:
+    async def get(self, addr: Address, **kwargs) -> Certificate | None:
         pass
 
 
 class BaseSocketScanner:
     def __init__(
         self,
-        checkers: Iterable[BaseProtocolChecker],
-        addr: Address | None = None,
-        ip_addr: str | None = None,
-        port: int | None = None,
+        checkers: Iterable[BaseCertificateGetter],
+        addr: Address = None,
     ):
         self._checkers = checkers
-        if addr:
-            self.addr = addr
-        else:
-            self.addr = Address(ip_addr, port)
-        self._sertificate: str | None = None
+        self._addr = addr
+        self._certificate: Certificate | None = None
 
-    def get_sertificate(self):
-        return self._sertificate
+    def get_certificate(self):
+        return self._certificate
 
     async def scan(self) -> bool:
+        # only ssl
         for checker in self._checkers:
-            sert = await checker.check(self.addr)
-            if sert:
-                self._sertificate = sert
+            cert = await checker.get(self._addr)
+            if cert:
+                self._certificate = cert
                 return True
         return False
