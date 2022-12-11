@@ -10,8 +10,11 @@ from pprint import pprint
 if __name__ == "__main__":
     ip = sys.argv[1]
     port = sys.argv[2]
+    domain = None
+    if len(sys.argv) > 3:
+        domain = sys.argv[3]
 
-    addr = Address(ip, port)
+    addr = Address(ip, port, domain)
     cert_getter = SSLCerificateGetter()
     socketScanner = SSLSocketScanner([cert_getter], addr)
     assert socketScanner.scan()

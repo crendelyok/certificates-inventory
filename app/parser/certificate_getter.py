@@ -24,9 +24,9 @@ class SSLCerificateGetter(BaseCertificateGetter):
             logging.warning(exc)
             return None
         # check if it's self-signed
-        params["self_signed"] = True
+        params["issuerError"] = True
         try:
-            params["self_signed"] = self.check_self_signed(addr)
+            params["issuerError"] = self.check_self_signed(addr)
         except Exception as exc:
             logging.warning(exc)
         return Certificate(bcert, addr, query_id=self._query_id, params=params)
@@ -35,13 +35,15 @@ class SSLCerificateGetter(BaseCertificateGetter):
     def check_self_signed(addr: Address) -> bool:
         # create socket
         try:
+            hostname = addr.ip_addr if addr.domain_name is None else addr.domain_name
             myctx = ssl.create_default_context()
             myctx.check_hostname = False
             myctx.verify_mode = ssl.CERT_REQUIRED
-            socket_conn = myctx.wrap_socket(socket.socket(), server_hostname=addr.ip_addr)
+            socket_conn = myctx.wrap_socket(socket.socket(), server_hostname=hostname)
             socket_conn.connect(addr.as_pair())
             binary_cert = socket_conn.getpeercert(binary_form=True)
-        except:
+        except Exception as exc:
+            logging.warning(exc)
             return True
         return False
 
@@ -49,10 +51,11 @@ class SSLCerificateGetter(BaseCertificateGetter):
     def create_binary_certificate(addr: Address):
         # create socket
         try:
+            hostname = addr.ip_addr if addr.domain_name is None else addr.domain_name
             myctx = ssl.create_default_context()
             myctx.check_hostname = False
             myctx.verify_mode = ssl.CERT_NONE
-            socket_conn = myctx.wrap_socket(socket.socket(), server_hostname=addr.ip_addr)
+            socket_conn = myctx.wrap_socket(socket.socket(), server_hostname=hostname)
             socket_conn.settimeout(SOCKET_CONN_TTL)
             socket_conn.connect(addr.as_pair())
             binary_cert = socket_conn.getpeercert(binary_form=True)

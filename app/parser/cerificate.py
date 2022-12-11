@@ -32,14 +32,14 @@ class Certificate:
                 PublicKeyAlg=self.get_public_key_alg(cert.public_key()),
                 SignatureAlg=self.get_signature_alg(cert.public_key()),
                 HashAlg=cert.signature_hash_algorithm.name,
-                isSelfSigned = False,
+                issuerError=False,
                 ip=addr.ip_addr,
                 port=addr.port,
                 queryId=query_id,
             )
             if params:
-                if "self_signed" in params:
-                    self.cerificate_data.isSelfSigned = params["self_signed"]
+                if "issuerError" in params:
+                    self.cerificate_data.issuerError = params["issuerError"]
         except Exception as exc:
 
             logging.warning(exc)
