@@ -23,6 +23,7 @@ class CertificateInfo(BaseModel):
     PublicKeyAlg: str
     SignatureAlg: str
     HashAlg: str
+    issuerError: bool
 
     ip: IPv4Address
     port: int

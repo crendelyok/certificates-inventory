@@ -10,7 +10,10 @@ logging.getLogger(__name__)
 
 
 class Certificate:
-    def __init__(self, bcert, addr: Address, query_id: int | None = None):
+    def __init__(self, bcert,
+                 addr: Address,
+                 query_id: int | None = None,
+                 params: dict | None = None):
         """
         bcert is der_x509 binary formatted certificate
         """
@@ -20,7 +23,6 @@ class Certificate:
                 bcert,
                 cryptography.hazmat.backends.openssl.backend
             )
-
             self.cerificate_data = CertificateInfo(
                 bcert=bcert,
                 issuer=cert.issuer,
@@ -30,10 +32,14 @@ class Certificate:
                 PublicKeyAlg=self.get_public_key_alg(cert.public_key()),
                 SignatureAlg=self.get_signature_alg(cert.public_key()),
                 HashAlg=cert.signature_hash_algorithm.name,
+                issuerError=False,
                 ip=addr.ip_addr,
                 port=addr.port,
                 queryId=query_id,
             )
+            if params:
+                if "issuerError" in params:
+                    self.cerificate_data.issuerError = params["issuerError"]
         except Exception as exc:
             logging.warning(exc)
 
