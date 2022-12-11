@@ -5,9 +5,11 @@
 </head>
 
 <body>
-    <h1>Serch IP addresses</h1>
+    {% include 'topnav.html' %}
 
-    <h2>Search settings</h2>
+    <h1>Search IP addresses</h1>
+
+    <h2>Settings</h2>
 
     <form action="/search" method="POST">
         <p style="font-style: italic;">Allowed protocols</p>
@@ -208,13 +210,13 @@
 
     <script>
         const checkMap = {{ check_map | safe }};
-        for (elemId of checkMap) {
+        Object.keys(checkMap).forEach(function(elemId) {
             var elem = document.getElementById(elemId);
             if (elem.getAttribute("type") === "checkbox") {
                 elem.setAttribute("checked", true);
             } else {
                 elem.setAttribute("value", checkMap[elemId])
             }
-        }
+        });
     </script>
 </body>

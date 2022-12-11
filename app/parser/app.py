@@ -6,11 +6,11 @@ from fastapi import FastAPI
 
 from app.common.models.address import IPRange
 from app.common.models.config import CertificatesScanConfig, SeachQueryId
-from app.common.utils.db_setup import DBSetup
+from app.common.database.search_query import SearchQuery
+from app.common.database.db_setup import DBSetup
 from app.common.utils.exceptions_logger import catch_exceptions_middleware
 from app.common.utils.logger_config import get_logger_config
 from app.common.utils.network import SingleSession, SyncSingleSession
-from app.parser.db.search_query import SearchQuery
 from app.parser.ip_scanner import IPScanner
 from app.parser.settings import Settings
 from app.parser.worker import ScannerQueue
@@ -26,6 +26,7 @@ async def startup():
     logging.config.dictConfig(get_logger_config())
     await SingleSession.init()
     SyncSingleSession.init()
+    ScannerQueue.init()
     logging.info("Server %s has started", app.title)
 
 
@@ -37,7 +38,7 @@ async def shutdown():
 
 @app.post("/scan")
 async def start_scan(config: CertificatesScanConfig):
-    config_dict = config.dict()
+    config_dict = config.to_json()
     time_created = datetime.now()
     query = SearchQuery(config=config_dict, time_created=time_created)
     query_id = await query.insert()
@@ -47,12 +48,15 @@ async def start_scan(config: CertificatesScanConfig):
         end=config.endAddr,
         mask=config.mask
     )
-    ScannerQueue.get_instance().put_nowait(IPScanner(ip_range, query_id))
+    try:
+        ScannerQueue.get_instance().put_nowait(IPScanner(ip_range, query_id))
+    except Exception as exc:
+        logging.critical(exc, exc_info=True)
 
     resp = await SingleSession.request(
         "POST",
         f"{Settings.get_settings().get_analyzer_addr()}/user_params",
-        json={"config": config_dict, "query_id": query_id}
+        json={"config": config_dict, "query_id": query_id, "time_created": str(time_created)}
     )
     if not resp.ok:
         logging.error("Failed to send query config (query_id %d) to analyzer", query_id)

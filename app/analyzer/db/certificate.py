@@ -1,6 +1,6 @@
 from sqlalchemy import Column, DateTime, Integer, Text, select
 
-from app.common.utils.db_setup import DBSetup
+from app.common.database.db_setup import DBSetup
 
 
 # TODO(dslynko): add fields

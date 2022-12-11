@@ -1,16 +1,16 @@
 import asyncio
 from datetime import datetime, timedelta
-import json
 import logging
 import logging.config
 
 from fastapi import FastAPI, HTTPException
 
 from app.analyzer.db.certificate import FoundCertificate
-from app.analyzer.db.user import FoundUser
 from app.analyzer.settings import Settings
+from app.common.database.search_query import SearchQuery
 from app.common.models.certificate import CertificateInfo
-from app.common.utils.db_setup import DBSetup
+from app.common.models.config import SearchQueryInfo
+from app.common.database.db_setup import DBSetup
 from app.common.utils.exceptions_logger import catch_exceptions_middleware
 from app.common.utils.logger_config import get_logger_config
 
@@ -29,23 +29,10 @@ def prepare_cert_to_db(data: CertificateInfo):
     )
 
 
-def prepare_user_to_db(data : dict):
-    return FoundUser(
-        start_time=data['start_date'],
-        expiry_time=data['end_date'],
-        keylen=data['keylen'],
-        algo_signature=data['algo_signature'],
-        algo_cipher=data['algo_cipher'],
-    )
-
-
-def prepare_user_data_to_front(user: FoundUser):
+def prepare_user_data_to_front(user: SearchQuery):
     return {
-        'start_date': user.start_time,
-        'end_date': user.expiry_time,
-        'keylen': user.keylen,
-        'algo_signature': user.algo_signature,
-        'algo_cipher': user.algo_cipher,
+        "time_created": user.time_created,
+        "config": user.config,
     }
 
 
@@ -90,16 +77,19 @@ async def startup():
 # send user params by id to front
 @app.get("/user_params", status_code = 200)
 async def get_user_params(user_id : int):
-    user_data = await FoundUser.get_by_id(user_id)
+    user_data = await SearchQuery.get_by_id(user_id)
     return prepare_user_data_to_front(user_data)
 
 
 # wait for user params
 # post them to db
 @app.post("/user_params", status_code = 201)
-async def define_user_params(user_info_json_str : str):
-    user_info_dict = json.loads(user_info_json_str)
-    user = prepare_user_to_db(user_info_dict)
+async def define_user_params(user_info: SearchQueryInfo):
+    user = SearchQuery(
+        rowid=user_info.query_id,
+        config=user_info.config.to_json(),
+        time_created=user_info.time_created,
+    )
     await user.insert()
 
 
@@ -116,7 +106,7 @@ async def save_cert_info(cert_info : CertificateInfo):
 async def get_by_id(query_id : int):
     cert_data_list, user_data = await asyncio.gather(*[
         FoundCertificate.get_by_query_id(query_id),
-        FoundUser.get_by_id(query_id)
+        SearchQuery.get_by_id(query_id)
     ])
     if not user_data:
         raise HTTPException(status_code=404)
@@ -127,7 +117,7 @@ async def get_by_id(query_id : int):
 
 @app.get("/history", status_code=200)
 async def get_searches_history():
-    return [prepare_user_data_to_front(user) for user in await FoundUser.get_all()]
+    return [prepare_user_data_to_front(user) for user in await SearchQuery.get_all()]
 
 
 @app.get("/default_config", status_code=200)
@@ -137,16 +127,16 @@ async def get_default_config():
     end_date = now + timedelta(days=120)
     time_format = Settings.get_settings().time_format
     return {
-        "ap_tls1.3": True,
-        "ke_ecdhe": True,
-        "a_ecdhe": True,
-        "mg_sha256": True,
-        "mg_sha384": True,
-        "c_aes_gcm": True,
-        "c_aes_ccm": True,
-        "c_aes_cbc": True,
-        "kl_length128": True,
-        "kl_length256": True,
+        "ap_tls1.3": 1,
+        "ke_ecdhe": 1,
+        "a_ecdhe": 1,
+        "mg_sha256": 1,
+        "mg_sha384": 1,
+        "c_aes_gcm": 1,
+        "c_aes_ccm": 1,
+        "c_aes_cbc": 1,
+        "kl_length128": 1,
+        "kl_length256": 1,
         "startDate": datetime.strftime(start_date, time_format),
         "endDate": datetime.strftime(end_date, time_format),
     }

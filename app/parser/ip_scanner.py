@@ -63,7 +63,7 @@ class IPScanner(BaseIPScanner):
                 resp = SyncSingleSession.request(
                     "POST",
                     f"{Settings.get_settings().get_analyzer_addr()}/raw_cert",
-                    data=scanner.get_certificate().cerificate_data.dict(),
+                    data=scanner.get_certificate().cerificate_data.to_json(),
                 )
                 if not resp.ok:
                     logging.error(

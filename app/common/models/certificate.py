@@ -28,3 +28,13 @@ class CertificateInfo(BaseModel):
     port: int
 
     queryId: int | None
+
+    def to_json(self):
+        res = self.dict()
+        for name in (
+            "notAfter",
+            "notBefore",
+            "ip",
+        ):
+            res[name] = str(res[name])
+        return res
