@@ -47,7 +47,7 @@ def generate_output(cert: FoundCertificate, user_info: dict):
     if user_info['end_date'] - user_info['start_date'] < cert.expiry_time - cert.start_time:
         output['is_long_term'] = 'Yes'
     else:
-        output['is_log_term'] = 'No'
+        output['is_long_term'] = 'No'
     if user_info['keylen'] <= cert.keylen:
         output['is_keylen_safe'] = 'Yes'
     else:
@@ -60,6 +60,10 @@ def generate_output(cert: FoundCertificate, user_info: dict):
         output['is_algo_cipher_safe'] = 'Yes'
     else:
         output['is_algo_cipher_safe'] = 'No'
+    if user_info['issuerError'] == True:
+        output['is_issuer_error'] = 'Yes'
+    else:
+        output['is_issuer_error'] = 'No'
     return output
 
 
