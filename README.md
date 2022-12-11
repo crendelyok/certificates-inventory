@@ -12,8 +12,8 @@ Run from the root directory
 
 ```bash
 $ sudo docker build -f ./app/analyzer/Dockerfile .
-$ sudo docker-compose build
-$ sudo docker-compose up
+$ sudo docker compose build
+$ sudo docker compose up
 ```
 
 Application UI can be accessed on `http://127.0.0.1:5000`
@@ -21,5 +21,5 @@ Application UI can be accessed on `http://127.0.0.1:5000`
 To shutdown services, run
 
 ```bash
-$ sudo docker-compose down
+$ sudo docker compose down
 ```

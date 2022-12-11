@@ -1,13 +1,13 @@
 FROM base AS analyzer
 
 WORKDIR /
-VOLUME [ "/app/analyzer/db" ]
+# VOLUME [ "/app/analyzer/db" ]
 
 ENV config_file="/app/config.yaml"
 
 COPY ./app/analyzer/ /app/analyzer
 COPY ./app/common /app/common/
-COPY ./config.yaml /app/
+COPY ./configs/analyzer.yaml /app/config.yaml
 
 EXPOSE 5002
 

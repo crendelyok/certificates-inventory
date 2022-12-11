@@ -10,183 +10,195 @@
     <h2>Search settings</h2>
 
     <form action="/search" method="POST">
-        <p style="font-style: italic;">Minimal required protocol</p>
+        <p style="font-style: italic;">Allowed protocols</p>
         <div>
-            <input type="checkbox" id="ssl2.0" name="minVersion" value="ssl2.0">
-            <label for="ssl2.0">SSL 2.0</label>
+            <input type="checkbox" id="ap_ssl2.0" name="allowedProtocols" value="ssl2.0">
+            <label for="ap_ssl2.0">SSL 2.0</label>
 
-            <input type="checkbox" id="ssl3.0" name="minVersion" value="ssl3.0">
-            <label for="ssl3.0">SSL 3.0</label>
+            <input type="checkbox" id="ap_ssl3.0" name="allowedProtocols" value="ssl3.0">
+            <label for="ap_ssl3.0">SSL 3.0</label>
 
-            <input type="checkbox" id="tls1.0" name="minVersion" value="tls1.0">
-            <label for="tls1.0">TLS 1.0</label>
+            <input type="checkbox" id="ap_tls1.0" name="allowedProtocols" value="tls1.0">
+            <label for="ap_tls1.0">TLS 1.0</label>
 
-            <input type="checkbox" id="tls1.1" name="minVersion" value="tls1.1">
-            <label for="tls1.1">TLS 1.1</label>
+            <input type="checkbox" id="ap_tls1.1" name="allowedProtocols" value="tls1.1">
+            <label for="ap_tls1.1">TLS 1.1</label>
 
-            <input type="checkbox" id="tls1.2" name="minVersion" value="tls1.2">
-            <label for="tls1.2">TLS 1.2</label>
+            <input type="checkbox" id="ap_tls1.2" name="allowedProtocols" value="tls1.2">
+            <label for="ap_tls1.2">TLS 1.2</label>
 
-            <input type="checkbox" id="tls1.3" name="minVersion" value="tls1.3">
-            <label for="tls1.3">TLS 1.3</label>
+            <input type="checkbox" id="ap_tls1.3" name="allowedProtocols" value="tls1.3">
+            <label for="ap_tls1.3">TLS 1.3</label>
         </div>
 
         <p style="margin-top: 20px; font-style: italic;">Allowed key exchange algorithms</p>
         <div>
-            <input type="checkbox" id="rsa" name="keyExchange" value="rsa">
-            <label for="rsa">RSA</label>
+            <input type="checkbox" id="ke_rsa" name="keyExchange" value="rsa">
+            <label for="ke_rsa">RSA</label>
 
-            <input type="checkbox" id="dh" name="keyExchange" value="dh">
-            <label for="dh">Diffie Hellman</label>
+            <input type="checkbox" id="ke_dh" name="keyExchange" value="dh">
+            <label for="ke_dh">Diffie Hellman</label>
 
-            <input type="checkbox" id="dhe" name="keyExchange" value="dhe">
-            <label for="dhe">Ephemeral Diffie Hellman</label>
+            <input type="checkbox" id="ke_dhe" name="keyExchange" value="dhe">
+            <label for="ke_dhe">Ephemeral Diffie Hellman</label>
 
-            <input type="checkbox" id="ecdh" name="keyExchange" value="ecdh">
-            <label for="ecdh">Elliptic-curve Diffie Hellman</label>
+            <input type="checkbox" id="ke_ecdh" name="keyExchange" value="ecdh">
+            <label for="ke_ecdh">Elliptic-curve Diffie Hellman</label>
 
-            <input type="checkbox" id="ecdhe" name="keyExchange" value="ecdhe">
-            <label for="ecdhe">Ephemeral elliptic-curve Diffie–Hellman</label>
+            <input type="checkbox" id="ke_ecdhe" name="keyExchange" value="ecdhe">
+            <label for="ke_ecdhe">Ephemeral elliptic-curve Diffie–Hellman</label>
 
-            <input type="checkbox" id="dhAnon" name="keyExchange" value="dhAnon">
-            <label for="dhAnon">Anonymous Diffie–Hellman</label>
+            <input type="checkbox" id="ke_dhAnon" name="keyExchange" value="dhAnon">
+            <label for="ke_dhAnon">Anonymous Diffie–Hellman</label>
 
-            <input type="checkbox" id="psk" name="keyExchange" value="psk">
-            <label for="psk">Pre-shared key</label>
+            <input type="checkbox" id="ke_psk" name="keyExchange" value="psk">
+            <label for="ke_psk">Pre-shared key</label>
 
-            <input type="checkbox" id="srp" name="keyExchange" value="srp">
-            <label for="srp">Secure Remote Password</label>
+            <input type="checkbox" id="ke_srp" name="keyExchange" value="srp">
+            <label for="ke_srp">Secure Remote Password</label>
         </div>
 
         <p style="margin-top: 20px; font-style: italic;">Allowed authentication algorithms</p>
         <div>
-            <input type="checkbox" id="rsa" name="auth" value="rsa">
-            <label for="rsa">RSA</label>
+            <input type="checkbox" id="a_rsa" name="auth" value="rsa">
+            <label for="a_rsa">RSA</label>
 
-            <input type="checkbox" id="dh" name="auth" value="dh">
-            <label for="dh">Diffie Hellman</label>
+            <input type="checkbox" id="a_dh" name="auth" value="dh">
+            <label for="a_dh">Diffie Hellman</label>
 
-            <input type="checkbox" id="dhe" name="auth" value="dhe">
-            <label for="dhe">Ephemeral Diffie Hellman</label>
+            <input type="checkbox" id="a_dhe" name="auth" value="dhe">
+            <label for="a_dhe">Ephemeral Diffie Hellman</label>
 
-            <input type="checkbox" id="ecdh" name="auth" value="ecdh">
-            <label for="ecdh">Elliptic-curve Diffie Hellman</label>
+            <input type="checkbox" id="a_ecdh" name="auth" value="ecdh">
+            <label for="a_ecdh">Elliptic-curve Diffie Hellman</label>
 
-            <input type="checkbox" id="ecdhe" name="auth" value="ecdhe">
-            <label for="ecdhe">Ephemeral elliptic-curve Diffie–Hellman</label>
+            <input type="checkbox" id="a_ecdhe" name="auth" value="ecdhe">
+            <label for="a_ecdhe">Ephemeral elliptic-curve Diffie–Hellman</label>
 
-            <input type="checkbox" id="dhAnon" name="auth" value="dhAnon">
-            <label for="dhAnon">Anonymous Diffie–Hellman</label>
+            <input type="checkbox" id="a_dhAnon" name="auth" value="dhAnon">
+            <label for="a_dhAnon">Anonymous Diffie–Hellman</label>
 
-            <input type="checkbox" id="psk" name="auth" value="psk">
-            <label for="psk">Pre-shared key</label>
+            <input type="checkbox" id="a_psk" name="auth" value="psk">
+            <label for="a_psk">Pre-shared key</label>
 
-            <input type="checkbox" id="srp" name="auth" value="srp">
-            <label for="srp">Secure Remote Password</label>
+            <input type="checkbox" id="a_srp" name="auth" value="srp">
+            <label for="a_srp">Secure Remote Password</label>
         </div>
 
         <p style="margin-top: 20px; font-style: italic;">
             Allowed Message Authentication Code (MAC) generation algorithm
         </p>
         <div>
-            <input type="checkbox" id="md5" name="macGen" value="md5">
-            <label for="md5">MD5</label>
+            <input type="checkbox" id="mg_md5" name="macGen" value="md5">
+            <label for="mg_md5">MD5</label>
 
-            <input type="checkbox" id="sha1" name="macGen" value="sha1">
-            <label for="sha1">SHA1</label>
+            <input type="checkbox" id="mg_sha1" name="macGen" value="sha1">
+            <label for="mg_sha1">SHA1</label>
 
-            <input type="checkbox" id="sha256" name="macGen" value="sha256">
-            <label for="sha256">SHA256</label>
+            <input type="checkbox" id="mg_sha256" name="macGen" value="sha256">
+            <label for="mg_sha256">SHA256</label>
 
-            <input type="checkbox" id="sha384" name="macGen" value="sha384">
-            <label for="sha384">SHA384</label>
+            <input type="checkbox" id="mg_sha384" name="macGen" value="sha384">
+            <label for="mg_sha384">SHA384</label>
 
-            <input type="checkbox" id="aead" name="macGen" value="aead">
-            <label for="aead">AEAD</label>
+            <input type="checkbox" id="mg_aead" name="macGen" value="aead">
+            <label for="mg_aead">AEAD</label>
 
-            <input type="checkbox" id="magma" name="macGen" value="magma">
-            <label for="magma">GOST 28147-89 IMIT</label>
+            <input type="checkbox" id="mg_magma" name="macGen" value="magma">
+            <label for="mg_magma">GOST 28147-89 IMIT</label>
 
-            <input type="checkbox" id="streebog" name="macGen" value="streebog">
-            <label for="streebog">GOST R 34.11-94</label>
+            <input type="checkbox" id="mg_streebog" name="macGen" value="streebog">
+            <label for="mg_streebog">GOST R 34.11-94</label>
         </div>
 
-        <p style="margin-top: 20px; font-style: italic;">Allowed cipher algorithms</p>
+        <p style="margin-top: 20px; font-style: italic;">Allowed ciphers algorithms</p>
         <div>
-            <input type="checkbox" id="aes_gcm" name="cipher" value="aes_gcm">
-            <label for="aes_gcm">AES GCM</label>
+            <input type="checkbox" id="c_aes_gcm" name="ciphers" value="aes_gcm">
+            <label for="c_aes_gcm">AES GCM</label>
 
-            <input type="checkbox" id="aes_ccm" name="cipher" value="aes_ccm">
-            <label for="aes_ccm">AES CCM</label>
+            <input type="checkbox" id="c_aes_ccm" name="ciphers" value="aes_ccm">
+            <label for="c_aes_ccm">AES CCM</label>
 
-            <input type="checkbox" id="aes_cbc" name="cipher" value="aes_cbc">
-            <label for="aes_cbc">AES CBC</label>
+            <input type="checkbox" id="c_aes_cbc" name="ciphers" value="aes_cbc">
+            <label for="c_aes_cbc">AES CBC</label>
 
-            <input type="checkbox" id="camellia_gcm" name="cipher" value="camellia_gcm">
-            <label for="camellia_gcm">Camellia GCM</label>
+            <input type="checkbox" id="c_camellia_gcm" name="ciphers" value="camellia_gcm">
+            <label for="c_camellia_gcm">Camellia GCM</label>
 
-            <input type="checkbox" id="camellia_cbc" name="cipher" value="camellia_cbc">
-            <label for="camellia_cbc">Camellia CBC</label>
+            <input type="checkbox" id="c_camellia_cbc" name="ciphers" value="camellia_cbc">
+            <label for="c_camellia_cbc">Camellia CBC</label>
 
-            <input type="checkbox" id="aria_gcm" name="cipher" value="aria_gcm">
-            <label for="aria_gcm">ARIA GCM</label>
+            <input type="checkbox" id="c_aria_gcm" name="ciphers" value="aria_gcm">
+            <label for="c_aria_gcm">ARIA GCM</label>
 
-            <input type="checkbox" id="aria_cbc" name="cipher" value="aria_cbc">
-            <label for="aria_cbc">ARIA CBC</label>
+            <input type="checkbox" id="c_aria_cbc" name="ciphers" value="aria_cbc">
+            <label for="c_aria_cbc">ARIA CBC</label>
 
-            <input type="checkbox" id="seed_cbc" name="cipher" value="seed_cbc">
-            <label for="seed_cbc">SEED CBC</label>
+            <input type="checkbox" id="c_seed_cbc" name="ciphers" value="seed_cbc">
+            <label for="c_seed_cbc">SEED CBC</label>
 
-            <input type="checkbox" id="3des_ede_cbc" name="cipher" value="3des_ede_cbc">
-            <label for="3des_ede_cbc">3DES EDE CBC</label>
+            <input type="checkbox" id="c_3des_ede_cbc" name="ciphers" value="3des_ede_cbc">
+            <label for="c_3des_ede_cbc">3DES EDE CBC</label>
 
-            <input type="checkbox" id="magma" name="cipher" value="magma">
-            <label for="magma">GOST 28147-89 CNT</label>
+            <input type="checkbox" id="c_magma" name="ciphers" value="magma">
+            <label for="c_magma">GOST 28147-89 CNT</label>
 
-            <input type="checkbox" id="idea_cbc" name="cipher" value="idea_cbc">
-            <label for="idea_cbc">IDEA CBC</label>
+            <input type="checkbox" id="c_idea_cbc" name="ciphers" value="idea_cbc">
+            <label for="c_idea_cbc">IDEA CBC</label>
 
-            <input type="checkbox" id="des_cbc" name="cipher" value="des_cbc">
-            <label for="des_cbc">DES CBC</label>
+            <input type="checkbox" id="c_des_cbc" name="ciphers" value="des_cbc">
+            <label for="c_des_cbc">DES CBC</label>
 
-            <input type="checkbox" id="rc2_cbc" name="cipher" value="rc2_cbc">
-            <label for="rc2_cbc">RC2 CBC</label>
+            <input type="checkbox" id="c_rc2_cbc" name="ciphers" value="rc2_cbc">
+            <label for="c_rc2_cbc">RC2 CBC</label>
 
-            <input type="checkbox" id="chacha20" name="cipher" value="chacha20">
-            <label for="chacha20">ChaCha20-Poly1305</label>
+            <input type="checkbox" id="c_chacha20" name="ciphers" value="chacha20">
+            <label for="c_chacha20">ChaCha20-Poly1305</label>
 
-            <input type="checkbox" id="rc4" name="cipher" value="rc4">
-            <label for="rc4">RC4</label>
+            <input type="checkbox" id="c_rc4" name="ciphers" value="rc4">
+            <label for="c_rc4">RC4</label>
         </div>
 
         <p style="margin-top: 20px; font-style: italic;">Allowed key length</p>
         <div>
-            <input type="checkbox" id="length40" name="keyLength" value="length40">
-            <label for="length40">40</label>
+            <input type="checkbox" id="kl_length40" name="keyLengths" value="length40">
+            <label for="kl_length40">40</label>
 
-            <input type="checkbox" id="length56" name="keyLength" value="length56">
-            <label for="length56">56</label>
+            <input type="checkbox" id="kl_length56" name="keyLengths" value="length56">
+            <label for="kl_length56">56</label>
 
-            <input type="checkbox" id="length112" name="keyLength" value="length112">
-            <label for="length112">112</label>
+            <input type="checkbox" id="kl_length112" name="keyLengths" value="length112">
+            <label for="kl_length112">112</label>
 
-            <input type="checkbox" id="length128" name="keyLength" value="length128">
-            <label for="length128">128</label>
+            <input type="checkbox" id="kl_length128" name="keyLengths" value="length128">
+            <label for="kl_length128">128</label>
 
-            <input type="checkbox" id="length256" name="keyLength" value="length256">
-            <label for="length256">256</label>
+            <input type="checkbox" id="kl_length256" name="keyLengths" value="length256">
+            <label for="kl_length256">256</label>
         </div>
 
         <p style="margin-top: 20px; font-style: italic;">Issue date lower bound</p>
         <div>
-            <input type="date" id="startDate" name="startDate" value="2022-01-01">
+            <input type="date" id="startDate" name="startDate">
             <label for="startDate">Start date</label>
         </div>
 
         <p style="margin-top: 20px; font-style: italic;">Expiration date upper bound</p>
         <div>
-            <input type="date" id="endDate" name="endDate" value="2023-01-01">
+            <input type="date" id="endDate" name="endDate">
             <label for="endDate">End date</label>
+        </div>
+
+        <p style="margin-top: 20px; font-style: italic;">Start IP address</p>
+        <div>
+            <input type="text" id="startAddr" name="startAddr">
+            <label for="startAddr">Start from</label>
+        </div>
+
+        <p style="margin-top: 20px; font-style: italic;">End IP address</p>
+        <div>
+            <input type="text" id="endAddr" name="endAddr">
+            <label for="endAddr">End at</label>
         </div>
 
         <div style="margin-top: 30px;">
@@ -194,4 +206,15 @@
         </div>
     </form>
 
+    <script>
+        const checkMap = {{ check_map | safe }};
+        for (elemId of checkMap) {
+            var elem = document.getElementById(elemId);
+            if (elem.getAttribute("type") === "checkbox") {
+                elem.setAttribute("checked", true);
+            } else {
+                elem.setAttribute("value", checkMap[elemId])
+            }
+        }
+    </script>
 </body>

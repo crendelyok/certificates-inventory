@@ -2,15 +2,16 @@ import logging
 import logging.config
 
 from fastapi import FastAPI, HTTPException, Request
-from fastapi.responses import JSONResponse
+from fastapi.responses import RedirectResponse
+from fastapi.templating import Jinja2Templates
 # pylint: disable=no-name-in-module
 from pydantic import ValidationError
 from starlette.staticfiles import StaticFiles
 
 from app.common.utils.exceptions_logger import catch_exceptions_middleware
 from app.common.utils.logger_config import get_logger_config
-from app.common.utils.requests import SingleSession
-from app.common.models.config import CertificatesScanConfig, ScanStartedResponse
+from app.common.utils.network import SingleSession
+from app.common.models.config import CertificatesScanConfig, SeachQueryId
 from app.frontend.settings import Settings
 
 logging.getLogger(__name__)
@@ -19,6 +20,7 @@ logging.getLogger(__name__)
 app = FastAPI(title="Frontend")
 app.middleware("http")(catch_exceptions_middleware)
 app.mount("/static/", StaticFiles(directory="/app/frontend/web/static"), name="static")
+app.templates = Jinja2Templates("/app/frontend/web/templates")
 
 
 @app.on_event("startup")
@@ -35,7 +37,7 @@ async def shutdown():
 
 @app.get("/", status_code=200)
 async def get_index_page(request: Request):
-    return Settings.get_settings().templates.TemplateResponse(
+    return app.templates.TemplateResponse(
         "index.html",
         {"request": request}
     )
@@ -43,17 +45,44 @@ async def get_index_page(request: Request):
 
 @app.get("/search_history", status_code=200)
 async def get_search_history_page(request: Request):
-    return Settings.get_settings().templates.TemplateResponse(
+    resp = await SingleSession.request(
+        "GET",
+        f"{Settings.get_settings().get_analyzer_addr()}/history"
+    )
+    if not resp.ok:
+        raise HTTPException(status_code=resp.status)
+    return app.templates.TemplateResponse(
         "search_history.html",
-        {"request": request}
+        {"request": request, "history": await resp.json()}
+    )
+
+
+@app.get("/search_report/{query_id}", status_code=200)
+async def get_search_reports_page(request: Request, query_id: int):
+    resp = await SingleSession.request(
+        "GET",
+        f"{Settings.get_settings().get_analyzer_addr()}/reports",
+        params={"query_id": query_id}
+    )
+    if not resp.ok:
+        raise HTTPException(status_code=resp.status)
+    return app.templates.TemplateResponse(
+        "search_reports.html",
+        {"request": request, "query_id": query_id, "reports": await resp.json()}
     )
 
 
 @app.get("/search", status_code=200)
 async def get_search_page(request: Request):
-    return Settings.get_settings().templates.TemplateResponse(
+    resp = await SingleSession.request(
+        "GET",
+        f"{Settings.get_settings().get_analyzer_addr()}/default_config",
+    )
+    if not resp.ok:
+        raise HTTPException(status_code=resp.status)
+    return app.templates.TemplateResponse(
         "search.html",
-        {"request": request}
+        {"request": request, "check_map": await resp.json()}
     )
 
 
@@ -62,11 +91,11 @@ async def start_search(config: CertificatesScanConfig):
     resp = await SingleSession.request(
         "POST",
         f"{Settings.get_settings().get_parser_addr()}/scan",
-        json=config
+        json=config.dict()
     )
     try:
-        resp_data = ScanStartedResponse(**(await resp.json()))
-        return JSONResponse(resp_data.dict(), status_code=resp.status)
+        resp_data = SeachQueryId(**(await resp.json()))
+        return RedirectResponse(url=f"/reports/{resp_data.query_id}")
     except ValidationError as exc:
         logging.warning("Failed search-start response: %s", str(exc))
         raise HTTPException(status_code=500) from exc

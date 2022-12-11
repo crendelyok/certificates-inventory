@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, Text, select, DateTime
 
-from app.analyzer.db import DBSetup
+from app.common.utils.db_setup import DBSetup
 
 
 class FoundUser(DBSetup.Base):
@@ -23,3 +23,9 @@ class FoundUser(DBSetup.Base):
         async with DBSetup.Session() as session:
             cursor = await session.execute(select(FoundUser).where(FoundUser.rowid == user_id))
             return cursor.scalar()
+
+    @staticmethod
+    async def get_all():
+        async with DBSetup.Session() as session:
+            cursor = await session.execute(select(FoundUser))
+            return cursor.scalars().fetchall()

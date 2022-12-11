@@ -10,26 +10,35 @@ services:
       mode: replicated
       replicas: 0
 
-  parser:
-    build:
-      context: .
-      dockerfile: ./app/parser/Dockerfile
-    expose:
-      - "5001"
-
-  analyzer:
-    build:
-      context: .
-      dockerfile: ./app/analyzer/Dockerfile
-    expose:
-      - "5002"
-    # volumes:
-    #   - "./app/analyzer/db:/app/analyzer/db"
-
   frontend:
     build:
       context: .
       dockerfile: ./app/frontend/Dockerfile
     network_mode: host
     expose:
-      - "5000"
+      - 5000
+    depends_on:
+      - parser
+      - analyzer
+
+  parser:
+    build:
+      context: .
+      dockerfile: ./app/parser/Dockerfile
+    ports:
+      - 5001
+    expose:
+      - 5001
+    depends_on:
+      - analyzer
+
+  analyzer:
+    build:
+      context: .
+      dockerfile: ./app/analyzer/Dockerfile
+    ports:
+      - 5002
+    expose:
+      - 5002
+    # volumes:
+    #   - "./app/analyzer/db:/app/analyzer/db"

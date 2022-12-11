@@ -1,12 +1,19 @@
+from datetime import datetime
 import logging
 import logging.config
 
 from fastapi import FastAPI
-from fastapi.responses import JSONResponse
 
-from app.common.models.config import CertificatesScanConfig
+from app.common.models.address import IPRange
+from app.common.models.config import CertificatesScanConfig, SeachQueryId
+from app.common.utils.db_setup import DBSetup
 from app.common.utils.exceptions_logger import catch_exceptions_middleware
 from app.common.utils.logger_config import get_logger_config
+from app.common.utils.network import SingleSession, SyncSingleSession
+from app.parser.db.search_query import SearchQuery
+from app.parser.ip_scanner import IPScanner
+from app.parser.settings import Settings
+from app.parser.worker import ScannerQueue
 
 
 app = FastAPI(title="Parser")
@@ -15,15 +22,39 @@ app.middleware("http")(catch_exceptions_middleware)
 
 @app.on_event("startup")
 async def startup():
+    await DBSetup.init(Settings.get_settings().default_db_path)
     logging.config.dictConfig(get_logger_config())
+    await SingleSession.init()
+    SyncSingleSession.init()
     logging.info("Server %s has started", app.title)
+
+
+@app.on_event("shutdown")
+async def shutdown():
+    await SingleSession.close()
+    SyncSingleSession.close()
 
 
 @app.post("/scan")
 async def start_scan(config: CertificatesScanConfig):
-    return JSONResponse({}, status_code=201)
+    config_dict = config.dict()
+    time_created = datetime.now()
+    query = SearchQuery(config=config_dict, time_created=time_created)
+    query_id = await query.insert()
 
+    ip_range = IPRange(
+        start=config.startAddr,
+        end=config.endAddr,
+        mask=config.mask
+    )
+    ScannerQueue.get_instance().put_nowait(IPScanner(ip_range, query_id))
 
-@app.get("/scan", status_code=200)
-async def get_scan_result(scan_id: int):
-    pass
+    resp = await SingleSession.request(
+        "POST",
+        f"{Settings.get_settings().get_analyzer_addr()}/user_params",
+        json={"config": config_dict, "query_id": query_id}
+    )
+    if not resp.ok:
+        logging.error("Failed to send query config (query_id %d) to analyzer", query_id)
+
+    return SeachQueryId(query_id=query_id).dict()
