@@ -13,13 +13,24 @@ logging.getLogger(__name__)
 
 
 class IPScanner(BaseIPScanner):
+    # arrange by popularity, according to Towards a Complete View of the SSL/TLS Service Ports in the Wild
+    # 10.1007/978-3-030-41114-5 p. 562
     _default_ports = [
         443,  # should be first, as the most default
+        80,
+        8443,
+        3389,
+        993,
+        8080,
+        465,
+        5223,
+        2083,
+        3128,
+        995,
         21,
         22,
         25,
         53,
-        80,
         110,
         161,
         162,
@@ -27,7 +38,6 @@ class IPScanner(BaseIPScanner):
         7102,
         7104,
         7105,
-        8080,
     ]
 
     def __init__(self, ip_range: IPRange, query_id: int):
