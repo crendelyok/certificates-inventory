@@ -7,7 +7,6 @@ from fastapi.templating import Jinja2Templates
 # pylint: disable=no-name-in-module
 from pydantic import ValidationError
 from starlette.datastructures import FormData
-from starlette.staticfiles import StaticFiles
 
 from app.common.models.config import CertificatesScanConfig, SeachQueryId
 from app.common.utils.exceptions_logger import catch_exceptions_middleware
@@ -20,7 +19,6 @@ logging.getLogger(__name__)
 
 app = FastAPI(title="Frontend")
 app.middleware("http")(catch_exceptions_middleware)
-app.mount("/static/", StaticFiles(directory="/app/frontend/web/static"), name="static")
 app.templates = Jinja2Templates("/app/frontend/web/templates")
 
 
