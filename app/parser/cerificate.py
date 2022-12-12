@@ -10,29 +10,33 @@ logging.getLogger(__name__)
 
 
 class Certificate:
-    def __init__(self, bcert,
-                 addr: Address,
-                 query_id: int | None = None,
-                 params: dict | None = None):
+    def __init__(
+        self,
+        bcert,
+        addr: Address,
+        query_id: int | None = None,
+        params: dict | None = None
+    ):
         """
         bcert is der_x509 binary formatted certificate
         """
         # get info from binary itself
         try:
+            logging.debug("Parsing certificate for %s", str(addr))
             cert = cryptography.x509.load_der_x509_certificate(
                 bcert,
                 cryptography.hazmat.backends.openssl.backend
             )
             self.cerificate_data = CertificateInfo(
                 bcert=bcert,
-                issuer=cert.issuer,
+                version=cert.version.name,
+                issuer=cert.issuer.rfc4514_string(),
                 notAfter=cert.not_valid_after,
                 notBefore=cert.not_valid_before,
                 PublicKeyLen=cert.public_key().key_size,
                 PublicKeyAlg=self.get_public_key_alg(cert.public_key()),
                 SignatureAlg=self.get_signature_alg(cert.public_key()),
                 HashAlg=cert.signature_hash_algorithm.name,
-                issuerError=False,
                 ip=addr.ip_addr,
                 port=addr.port,
                 queryId=query_id,

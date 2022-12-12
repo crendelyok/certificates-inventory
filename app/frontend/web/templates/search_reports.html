@@ -5,15 +5,52 @@
 </head>
 
 <body>
-    <h1>Report on query {{ query_id }}</h1>
+    {% include 'topnav.html' %}
+
+    <h1>Reports on search #{{ query_id }} in range {{ config['startAddr'] }} - {{ config['endAddr'] }}</h1>
     <div>
-        <p>Checked ip   : {{ reports['ip'] }}</p>
-        <p>Checked port : {{ reports['port'] }}</p>
-        <p>Is certificate expired?&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - {{ reports['is_expired']}}</p>
-        <p>Is certificate long-term? &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - {{ reports['is_long_term']}}</p>
-        <p>Is length of key safe?&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - {{ reports['is_keylen_safe']}}</p>
-        <p>Is algorithm of signature safe? &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- {{ reports['is_algo_signature_safe']}}</p>
-        <p>Is algorithm of cipher safe?&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - {{ reports['is_algo_cipher_safe']}}</p>
-        <p>Is cerificate has untrusted issuer? - {{ reports['is_issuer_error']}}</p>
+        <details>
+            <summary>Search configurations</summary>
+            <p>
+                <span style="font-style: italic;">Allowed protocols:</span> {{ config['allowedProtocols'] }}
+            </p>
+            <p>
+                <span style="font-style: italic;">Allowed key exchange algorithms:</span> {{ config['keyExchange'] }}
+            </p>
+            <p>
+                <span style="font-style: italic;">Allowed MAC generation algorithms:</span> {{ config['macGen'] }}
+            </p>
+            <p>
+                <span style="font-style: italic;">Allowed ciphers algorithms:</span> {{ config['ciphers'] }}
+            </p>
+            <p>
+                <span style="font-style: italic;">Allowed key lengths:</span> {{ config['keyLengths'] }}
+            </p>
+            <p>
+                <span style="font-style: italic;">Issue date lower bound:</span> {{ config['startDate'] }}
+            </p>
+            <p>
+                <span style="font-style: italic;">Expiration date upper bound:</span> {{ config['endDate'] }}
+            </p>
+        </details>
     </div>
+
+    {% for report in reports %}
+    <hr>
+    <div>
+        <p><span style="font-style: italic;">Checked IP :</span> {{ report['cert']['ip'] }}</p>
+        <p><span style="font-style: italic;">Checked port :</span> {{ report['cert']['port'] }}</p>
+        <p><span style="font-style: italic;">Issuer organization:</span> {{ report['cert']['issuer'] }}</p>
+        <p><span style="font-style: italic;">Is Protocol version safe?</span> - {{ report['is_version_safe'] }} (TLS {{ report['cert']['version'] }})</p>
+        <p><span style="font-style: italic;">Is certificate expired?</span> - {{ report['is_expired']}} (valid until: {{ report['cert']['notAfter'] }})</p>
+        <p><span style="font-style: italic;">Is certificate long-term?</span> - {{ report['is_long_term']}} (issued on: {{ report['cert']['notBefore'] }})</p>
+        <p><span style="font-style: italic;">Is length of key safe?</span> - {{ report['is_keylen_safe']}} ({{ report['cert']['PublicKeyLen'] }} bits)</p>
+        <p><span style="font-style: italic;">Is algorithm of key exchange/agreement safe?</span> - {{ report['is_public_key_safe']}} ({{ report['cert']['PublicKeyAlg'] }})</p>
+        <p><span style="font-style: italic;">Is algorithm of signature safe?</span> - {{ report['is_algo_signature_safe']}} ({{ report['cert']['SignatureAlg'] }})</p>
+        <p><span style="font-style: italic;">Is algorithm of cipher safe?</span> - {{ report['is_algo_cipher_safe']}} ({{ report['cert']['HashAlg'] }})</p>
+        <p><span style="font-style: italic;">Is cerificate has untrusted issuer?</span> - {{ report['is_issuer_error']}}</p>
+    </div>
+    {% else %}
+    <h2>No resources were found in the range...</h2>
+    {% endfor %}
 </body>

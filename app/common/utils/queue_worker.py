@@ -47,6 +47,10 @@ class BaseWorkerQueue(ABC):
         # wait for thread start
         event.wait()
         self._started = True
+        logging.debug(
+            "Queue worker %s has successfully started",
+            self.__class__.__name__
+        )
 
     def stop(self):
         assert self.has_started()
@@ -78,4 +82,14 @@ class BaseWorkerQueue(ABC):
                 time.sleep(0.1)
             else:
                 item = self._queue.get()
+                start_time = time.monotonic()
+                logging.debug(
+                    "Starting work loop iteration in %s",
+                    self.__class__.__name__
+                )
                 self.process_item(item)
+                logging.debug(
+                    "Ended work loop iteration in %s, elapsed %ss",
+                    self.__class__.__name__,
+                    time.monotonic() - start_time
+                )

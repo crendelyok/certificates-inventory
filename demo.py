@@ -1,23 +1,20 @@
+from pprint import pprint
+import socket
 import sys
 
 from app.common.models.address import Address
 from app.parser.scanners import SSLSocketScanner
 from app.parser.certificate_getter import SSLCerificateGetter
-from pprint import pprint
-import threading
-import socket
-import time
 
 
-def portscan(ip, port):
+def portscan(ip_, port_):
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.settimeout(0.1)
     try:
-        con = s.connect((ip, port))
-        print('Port :', port, "is open.")
+        con = s.connect((ip_, port_))
+        print('Port :', port_, "is open.")
         con.close()
     except:
-        # print('fuck')
         pass
 
 
@@ -47,4 +44,3 @@ if __name__ == "__main__":
 
     certificate = socketScanner.get_certificate()
     pprint(certificate.cerificate_data.dict())
-

@@ -27,11 +27,13 @@ async def startup():
     await SingleSession.init()
     SyncSingleSession.init()
     ScannerQueue.init()
+    ScannerQueue.get_instance().start()
     logging.info("Server %s has started", app.title)
 
 
 @app.on_event("shutdown")
 async def shutdown():
+    ScannerQueue.get_instance().stop()
     await SingleSession.close()
     SyncSingleSession.close()
 
@@ -48,10 +50,7 @@ async def start_scan(config: CertificatesScanConfig):
         end=config.endAddr,
         mask=config.mask
     )
-    try:
-        ScannerQueue.get_instance().put_nowait(IPScanner(ip_range, query_id))
-    except Exception as exc:
-        logging.critical(exc, exc_info=True)
+    ScannerQueue.get_instance().put_nowait(IPScanner(ip_range, query_id))
 
     resp = await SingleSession.request(
         "POST",

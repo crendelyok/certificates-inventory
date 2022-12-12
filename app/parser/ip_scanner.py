@@ -46,6 +46,7 @@ class IPScanner(BaseIPScanner):
             futures_list = []
             addr = self._ip_range.start
             while addr != self._ip_range.end:
+                logging.debug("Scanning address %s", str(addr))
                 futures_list.append(executor.submit(self._scan_one_address, addr))
                 addr += 1
 
@@ -53,7 +54,7 @@ class IPScanner(BaseIPScanner):
                 try:
                     future.result()
                 except Exception as exc:
-                    logging.critical("Unhandled exception: %s", str(exc))
+                    logging.critical("Unhandled exception: %s", str(exc), exc_info=True)
 
     def _scan_one_address(self, addr: IPv4Address):
         ports = self.ports(addr)
@@ -62,12 +63,14 @@ class IPScanner(BaseIPScanner):
                 [SSLCerificateGetter(query_id=self._query_id)],
                 Address(str(addr), port)
             )
+            logging.debug("Scanning (IP %s, port %d)", str(addr), port)
             if scanner.scan():
                 # send result to analyzer
+                logging.debug("Sending certificate from (IP %s, port %d)", str(addr), port)
                 resp = SyncSingleSession.request(
                     "POST",
                     f"{Settings.get_settings().get_analyzer_addr()}/raw_cert",
-                    data=scanner.get_certificate().cerificate_data.to_json(),
+                    json=scanner.get_certificate().cerificate_data.to_json(),
                 )
                 if not resp.ok:
                     logging.error(

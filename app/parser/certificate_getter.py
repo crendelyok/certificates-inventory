@@ -10,21 +10,25 @@ from app.parser import SOCKET_CONN_TTL
 logging.getLogger(__name__)
 
 
+class BinCertException(Exception):
+    pass
+
+
 class SSLCerificateGetter(BaseCertificateGetter):
     def __init__(self, query_id: int | None = None):
         self._query_id = query_id
         super().__init__()
 
     def get(self, addr: Address, **kwargs) -> Certificate | None:
-        params = {}
         # get binary certificate and decode
         try:
-            bcert = self.create_binary_certificate(addr)
+            bcert = self._create_binary_certificate(addr)
         except Exception as exc:
-            logging.warning(f"SSLCerificateGetter: Can't create_binary_certificate {exc}")
+            logging.warning("SSLCerificateGetter: Can't create binary certificate: %s", str(exc))
             return None
+
         # check if it's self-signed
-        params["issuerError"] = True
+        params = {"issuerError": True}
         try:
             params["issuerError"] = self.check_issuer_error(addr)
         except Exception as exc:
@@ -48,7 +52,7 @@ class SSLCerificateGetter(BaseCertificateGetter):
         return False
 
     @staticmethod
-    def create_binary_certificate(addr: Address):
+    def _create_binary_certificate(addr: Address):
         # create socket
         try:
             hostname = addr.ip_addr if addr.domain_name is None else addr.domain_name
@@ -60,12 +64,12 @@ class SSLCerificateGetter(BaseCertificateGetter):
             socket_conn.connect(addr.as_pair())
             binary_cert = socket_conn.getpeercert(binary_form=True)
         except ValueError as vexc:
-            raise Exception("Can't establish connection") from vexc
+            raise BinCertException("Can't establish connection") from vexc
         except TimeoutError as exc:
             logging.warning(exc)
-            raise Exception("Timeout socket error") from exc
+            raise BinCertException("Timeout socket error") from exc
         except Exception as exc:
             logging.warning(exc)
-            raise Exception("Can't get certificate") from exc
+            raise BinCertException("Can't get certificate") from exc
 
         return binary_cert
