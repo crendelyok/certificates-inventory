@@ -9,10 +9,10 @@ from pydantic import ValidationError
 from starlette.datastructures import FormData
 from starlette.staticfiles import StaticFiles
 
+from app.common.models.config import CertificatesScanConfig, SeachQueryId
 from app.common.utils.exceptions_logger import catch_exceptions_middleware
 from app.common.utils.logger_config import get_logger_config
 from app.common.utils.network import SingleSession
-from app.common.models.config import CertificatesScanConfig, SeachQueryId
 from app.frontend.settings import Settings
 
 logging.getLogger(__name__)
@@ -67,9 +67,16 @@ async def get_search_reports_page(request: Request, query_id: int):
     )
     if not resp.ok:
         raise HTTPException(status_code=resp.status)
+
+    resp_json: dict = await resp.json()
     return app.templates.TemplateResponse(
         "search_reports.html",
-        {"request": request, "query_id": query_id, "reports": await resp.json()}
+        {
+            "request": request,
+            "query_id": query_id,
+            "reports": resp_json["reports"],
+            "config": resp_json["config"],
+        }
     )
 
 
@@ -110,7 +117,7 @@ async def start_search(request: Request):
         raise HTTPException(status_code=resp.status)
     try:
         resp_data = SeachQueryId(**(await resp.json()))
-        return RedirectResponse(url=f"/reports/{resp_data.query_id}")
+        return RedirectResponse(url=f"/search_report/{resp_data.query_id}", status_code=303)
     except ValidationError as exc:
         logging.warning("Failed search-start response: %s", str(exc))
         raise HTTPException(status_code=500) from exc

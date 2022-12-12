@@ -26,6 +26,8 @@ services:
       dockerfile: ./app/parser/Dockerfile
     expose:
       - 5001
+    volumes:
+      - "./app/parser/db:/app/parser/db"
     depends_on:
       - analyzer
 
@@ -35,5 +37,5 @@ services:
       dockerfile: ./app/analyzer/Dockerfile
     expose:
       - 5002
-    # volumes:
-    #   - "./app/analyzer/db:/app/analyzer/db"
+    volumes:
+      - "./app/analyzer/db:/app/analyzer/db"

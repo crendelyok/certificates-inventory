@@ -9,5 +9,11 @@
 
     <h1>Searches history</h1>
 
-
+    <ul>
+        {% for entry in history %}
+        <li>
+            <a href="/search_report/{{ entry['query_id'] }}">Search #{{ entry['query_id'] }}</a>, IP addresses range {{ entry['config']['startAddr'] }} - {{ entry['config']['endAddr'] }}
+        </li>
+        {% endfor %}
+    </ul>
 </body>

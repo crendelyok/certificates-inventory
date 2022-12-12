@@ -9,61 +9,41 @@ from app.analyzer.db.certificate import FoundCertificate
 from app.analyzer.settings import Settings
 from app.common.database.search_query import SearchQuery
 from app.common.models.certificate import CertificateInfo
-from app.common.models.config import SearchQueryInfo
+from app.common.models.config import CertificatesScanConfig, SearchQueryInfo
 from app.common.database.db_setup import DBSetup
 from app.common.utils.exceptions_logger import catch_exceptions_middleware
 from app.common.utils.logger_config import get_logger_config
 
 
 def prepare_cert_to_db(data: CertificateInfo):
-    return FoundCertificate(
-        certificate=data.bcert,
-        query_id=data.queryId,
-        ip_addr=data.ip,
-        port=data.port,
-        start_time=data.notBefore,
-        expiry_time=data.notAfter,
-        keylen=data.PublicKeyLen,
-        algo_signature=data.SignatureAlg,
-        algo_cipher=data.HashAlg,
-    )
+    return FoundCertificate(**data.to_json(convert_datetime=False))
 
 
-def prepare_user_data_to_front(user: SearchQuery):
-    return {
-        "time_created": user.time_created,
-        "config": user.config,
+def prepare_user_data_to_front(user: SearchQuery) -> dict:
+    return SearchQueryInfo(
+        config=user.config,
+        query_id=user.rowid,
+        time_created=user.time_created
+    ).dict()
+
+
+def yes_no_predicate(pred: bool) -> str:
+    return 'Yes' if pred else 'No'
+
+
+def generate_output(cert: FoundCertificate, user_config: CertificatesScanConfig):
+    output = {
+        'cert': cert.to_json(),
+        'is_version_safe': yes_no_predicate(cert.version in user_config.allowedProtocols),
+        'is_expired': yes_no_predicate(datetime.now() > cert.notAfter),
+        'is_long_term': yes_no_predicate(user_config.endDate - user_config.startDate <\
+                                         cert.notAfter - cert.notBefore),
+        'is_keylen_safe': yes_no_predicate(any(x <= cert.PublicKeyLen for x in user_config.keyLengths)),
+        'is_public_key_safe': yes_no_predicate(cert.PublicKeyAlg in user_config.keyExchange),
+        'is_algo_signature_safe': yes_no_predicate(cert.SignatureAlg in user_config.keyExchange),
+        'is_algo_cipher_safe': yes_no_predicate(cert.HashAlg in user_config.macGen),
+        'is_issuer_error': yes_no_predicate(cert.issuerError),
     }
-
-
-def generate_output(cert: FoundCertificate, user_info: dict):
-    output = {}
-    output['ip'] = cert.ip_addr
-    output['port'] = cert.port
-    if datetime.now() > cert.expiry_time:
-        output['is_expired'] = 'Yes'
-    else:
-        output['is_expired'] = 'No'
-    if user_info['end_date'] - user_info['start_date'] < cert.expiry_time - cert.start_time:
-        output['is_long_term'] = 'Yes'
-    else:
-        output['is_long_term'] = 'No'
-    if user_info['keylen'] <= cert.keylen:
-        output['is_keylen_safe'] = 'Yes'
-    else:
-        output['is_keylen_safe'] = 'No'
-    if user_info['algo_signature'].find(cert.algo_signature) != -1:
-        output['is_algo_signature_safe'] = 'Yes'
-    else:
-        output['is_algo_signature_safe'] = 'No'
-    if user_info['algo_cipher'].find(cert.algo_cipher) != -1:
-        output['is_algo_cipher_safe'] = 'Yes'
-    else:
-        output['is_algo_cipher_safe'] = 'No'
-    if user_info['issuerError'] == True:
-        output['is_issuer_error'] = 'Yes'
-    else:
-        output['is_issuer_error'] = 'No'
     return output
 
 
@@ -100,9 +80,12 @@ async def define_user_params(user_info: SearchQueryInfo):
 # wait for cert info from parser
 # post that to db
 @app.post("/raw_cert", status_code = 201)
-async def save_cert_info(cert_info : CertificateInfo):
-    cert = prepare_cert_to_db(cert_info)
-    await cert.insert()
+async def save_cert_info(cert_info: CertificateInfo):
+    try:
+        cert = prepare_cert_to_db(cert_info)
+        await cert.insert()
+    except Exception as exc:
+        logging.critical(exc, exc_info=True)
 
 
 # send analyzed info by id to front
@@ -116,7 +99,14 @@ async def get_by_id(query_id : int):
         raise HTTPException(status_code=404)
 
     user_info_dict = prepare_user_data_to_front(user_data)
-    return [generate_output(cert, user_info_dict) for cert in cert_data_list]
+    user_config = CertificatesScanConfig.parse_obj(user_info_dict["config"])
+    return {
+        "reports": [
+            generate_output(cert, user_config)
+            for cert in cert_data_list
+        ],
+        "config": user_info_dict["config"]
+    }
 
 
 @app.get("/history", status_code=200)
@@ -132,8 +122,9 @@ async def get_default_config():
     time_format = Settings.get_settings().time_format
     return {
         "ap_tls1.3": 1,
-        "ke_ecdhe": 1,
-        "a_ecdhe": 1,
+        "ke_ecdh": 1,
+        "ke_ed25519": 1,
+        "ke_x25519": 1,
         "mg_sha256": 1,
         "mg_sha384": 1,
         "c_aes_gcm": 1,

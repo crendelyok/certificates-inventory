@@ -14,81 +14,51 @@
     <form action="/search" method="POST">
         <p style="font-style: italic;">Allowed protocols</p>
         <div>
-            <input type="checkbox" id="ap_ssl2.0" name="allowedProtocols" value="ssl2.0">
+            <input type="checkbox" id="ap_ssl2.0" name="allowedProtocols" value="sslv2">
             <label for="ap_ssl2.0">SSL 2.0</label>
 
-            <input type="checkbox" id="ap_ssl3.0" name="allowedProtocols" value="ssl3.0">
+            <input type="checkbox" id="ap_ssl3.0" name="allowedProtocols" value="sslv3">
             <label for="ap_ssl3.0">SSL 3.0</label>
 
-            <input type="checkbox" id="ap_tls1.0" name="allowedProtocols" value="tls1.0">
+            <input type="checkbox" id="ap_tls1.0" name="allowedProtocols" value="v0">
             <label for="ap_tls1.0">TLS 1.0</label>
 
-            <input type="checkbox" id="ap_tls1.1" name="allowedProtocols" value="tls1.1">
+            <input type="checkbox" id="ap_tls1.1" name="allowedProtocols" value="v1">
             <label for="ap_tls1.1">TLS 1.1</label>
 
-            <input type="checkbox" id="ap_tls1.2" name="allowedProtocols" value="tls1.2">
+            <input type="checkbox" id="ap_tls1.2" name="allowedProtocols" value="v2">
             <label for="ap_tls1.2">TLS 1.2</label>
 
-            <input type="checkbox" id="ap_tls1.3" name="allowedProtocols" value="tls1.3">
+            <input type="checkbox" id="ap_tls1.3" name="allowedProtocols" value="v3">
             <label for="ap_tls1.3">TLS 1.3</label>
         </div>
 
         <p style="margin-top: 20px; font-style: italic;">Allowed key exchange algorithms</p>
         <div>
-            <input type="checkbox" id="ke_rsa" name="keyExchange" value="rsa">
+            <input type="checkbox" id="ke_dsa" name="keyExchange" value="_DSAPublicKey">
+            <label for="ke_dsa">DSA</label>
+
+            <input type="checkbox" id="ke_rsa" name="keyExchange" value="_RSAPublicKey">
             <label for="ke_rsa">RSA</label>
 
-            <input type="checkbox" id="ke_dh" name="keyExchange" value="dh">
-            <label for="ke_dh">Diffie Hellman</label>
-
-            <input type="checkbox" id="ke_dhe" name="keyExchange" value="dhe">
-            <label for="ke_dhe">Ephemeral Diffie Hellman</label>
-
-            <input type="checkbox" id="ke_ecdh" name="keyExchange" value="ecdh">
+            <input type="checkbox" id="ke_ecdh" name="keyExchange" value="_EllipticCurvePublicKey">
             <label for="ke_ecdh">Elliptic-curve Diffie Hellman</label>
 
-            <input type="checkbox" id="ke_ecdhe" name="keyExchange" value="ecdhe">
-            <label for="ke_ecdhe">Ephemeral elliptic-curve Diffie–Hellman</label>
+            <input type="checkbox" id="ke_ed25519" name="keyExchange" value="_Ed25519PublicKey">
+            <label for="ke_ed25519">Ed25519</label>
 
-            <input type="checkbox" id="ke_dhAnon" name="keyExchange" value="dhAnon">
-            <label for="ke_dhAnon">Anonymous Diffie–Hellman</label>
+            <input type="checkbox" id="ke_ed448" name="keyExchange" value="_Ed448PublicKey">
+            <label for="ke_ed448">Ed448</label>
 
-            <input type="checkbox" id="ke_psk" name="keyExchange" value="psk">
-            <label for="ke_psk">Pre-shared key</label>
+            <input type="checkbox" id="ke_x25519" name="keyExchange" value="_X25519PublicKey">
+            <label for="ke_x25519">X25519</label>
 
-            <input type="checkbox" id="ke_srp" name="keyExchange" value="srp">
-            <label for="ke_srp">Secure Remote Password</label>
-        </div>
-
-        <p style="margin-top: 20px; font-style: italic;">Allowed authentication algorithms</p>
-        <div>
-            <input type="checkbox" id="a_rsa" name="auth" value="rsa">
-            <label for="a_rsa">RSA</label>
-
-            <input type="checkbox" id="a_dh" name="auth" value="dh">
-            <label for="a_dh">Diffie Hellman</label>
-
-            <input type="checkbox" id="a_dhe" name="auth" value="dhe">
-            <label for="a_dhe">Ephemeral Diffie Hellman</label>
-
-            <input type="checkbox" id="a_ecdh" name="auth" value="ecdh">
-            <label for="a_ecdh">Elliptic-curve Diffie Hellman</label>
-
-            <input type="checkbox" id="a_ecdhe" name="auth" value="ecdhe">
-            <label for="a_ecdhe">Ephemeral elliptic-curve Diffie–Hellman</label>
-
-            <input type="checkbox" id="a_dhAnon" name="auth" value="dhAnon">
-            <label for="a_dhAnon">Anonymous Diffie–Hellman</label>
-
-            <input type="checkbox" id="a_psk" name="auth" value="psk">
-            <label for="a_psk">Pre-shared key</label>
-
-            <input type="checkbox" id="a_srp" name="auth" value="srp">
-            <label for="a_srp">Secure Remote Password</label>
+            <input type="checkbox" id="ke_x448" name="keyExchange" value="_X448PublicKey">
+            <label for="ke_x448">X448</label>
         </div>
 
         <p style="margin-top: 20px; font-style: italic;">
-            Allowed Message Authentication Code (MAC) generation algorithm
+            Allowed Message Authentication Code (MAC) generation algorithms
         </p>
         <div>
             <input type="checkbox" id="mg_md5" name="macGen" value="md5">
@@ -161,21 +131,21 @@
             <label for="c_rc4">RC4</label>
         </div>
 
-        <p style="margin-top: 20px; font-style: italic;">Allowed key length</p>
+        <p style="margin-top: 20px; font-style: italic;">Allowed key lengths</p>
         <div>
-            <input type="checkbox" id="kl_length40" name="keyLengths" value="length40">
+            <input type="checkbox" id="kl_length40" name="keyLengths" value="40">
             <label for="kl_length40">40</label>
 
-            <input type="checkbox" id="kl_length56" name="keyLengths" value="length56">
+            <input type="checkbox" id="kl_length56" name="keyLengths" value="56">
             <label for="kl_length56">56</label>
 
-            <input type="checkbox" id="kl_length112" name="keyLengths" value="length112">
+            <input type="checkbox" id="kl_length112" name="keyLengths" value="112">
             <label for="kl_length112">112</label>
 
-            <input type="checkbox" id="kl_length128" name="keyLengths" value="length128">
+            <input type="checkbox" id="kl_length128" name="keyLengths" value="128">
             <label for="kl_length128">128</label>
 
-            <input type="checkbox" id="kl_length256" name="keyLengths" value="length256">
+            <input type="checkbox" id="kl_length256" name="keyLengths" value="256">
             <label for="kl_length256">256</label>
         </div>
 
@@ -212,10 +182,12 @@
         const checkMap = {{ check_map | safe }};
         Object.keys(checkMap).forEach(function(elemId) {
             var elem = document.getElementById(elemId);
-            if (elem.getAttribute("type") === "checkbox") {
-                elem.setAttribute("checked", true);
-            } else {
-                elem.setAttribute("value", checkMap[elemId])
+            if (elem) {
+                if (elem.getAttribute("type") === "checkbox") {
+                    elem.setAttribute("checked", true);
+                } else {
+                    elem.setAttribute("value", checkMap[elemId])
+                }
             }
         });
     </script>
